@@ -80,31 +80,5 @@ lib/
 
 - flutter: Latest version
 - http: For API calls
-- [Add other dependencies used in your pubspec.yaml]
 
-## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- News data provided by [Your News API Provider]
-- Icons from Material Design Icons
-- [Add any other acknowledgments]
-
-## Contact
-
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter)
-Project Link: [https://github.com/yourusername/news_app](https://github.com/yourusername/news_app)
-
-## Support
-
-⭐️ If you found this project helpful, please give it a star!
