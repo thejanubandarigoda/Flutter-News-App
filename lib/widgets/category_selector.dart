@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CategorySelector extends StatelessWidget {
   final Function(String) onCategorySelected;
 
-  const CategorySelector({Key? key, required this.onCategorySelected}) : super(key: key);
+  const CategorySelector({super.key, required this.onCategorySelected});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class CategorySelector extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blue.withOpacity(0.4),
+                    color: Colors.blue.withValues(alpha: 0.4),
                     blurRadius: 8,
                     spreadRadius: 2,
                     offset: Offset(2, 4),

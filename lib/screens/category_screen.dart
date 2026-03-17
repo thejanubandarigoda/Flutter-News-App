@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CategoryScreen extends StatelessWidget {
   final Function(String) onCategorySelected;
 
-  const CategoryScreen({Key? key, required this.onCategorySelected}) : super(key: key);
+  const CategoryScreen({super.key, required this.onCategorySelected});
 
   @override
   Widget build(BuildContext context) {

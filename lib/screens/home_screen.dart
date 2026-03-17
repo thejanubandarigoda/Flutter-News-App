@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import '../models/article_model.dart';
 import '../services/api_service.dart';
+import '../services/settings_service.dart';
 import '../widgets/news_card.dart';
 import 'category_screen.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -12,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Article> articles = [];
   bool isLoading = true;
-  String selectedCategory = 'general';
+  late String selectedCategory;
 
   final List<String> categories = [
     'general',
@@ -27,6 +30,29 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // Use the persisted default category on startup
+    selectedCategory = SettingsService.categoryNotifier.value;
+    fetchNews();
+
+    // If the saved country changes (via Settings), reload news
+    SettingsService.countryNotifier.addListener(_onCountryChanged);
+    // If the default category changes via Settings, update selection + reload
+    SettingsService.categoryNotifier.addListener(_onCategoryChanged);
+  }
+
+  @override
+  void dispose() {
+    SettingsService.countryNotifier.removeListener(_onCountryChanged);
+    SettingsService.categoryNotifier.removeListener(_onCategoryChanged);
+    super.dispose();
+  }
+
+  void _onCountryChanged() {
+    fetchNews();
+  }
+
+  void _onCategoryChanged() {
+    setState(() => selectedCategory = SettingsService.categoryNotifier.value);
     fetchNews();
   }
 
@@ -35,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       articles = await ApiService.fetchNews(category: selectedCategory);
     } catch (e) {
-      print('Error fetching news: $e');
+      debugPrint('Error fetching news: $e');
     }
     setState(() => isLoading = false);
   }
@@ -43,18 +69,18 @@ class _HomeScreenState extends State<HomeScreen> {
   void updateCategory(String category) {
     setState(() {
       selectedCategory = category;
-      fetchNews();
     });
+    fetchNews();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('News App'),
+        title: const Text('News App'),
         actions: [
           IconButton(
-            icon: Icon(Icons.menu),
+            icon: const Icon(Icons.menu),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -70,47 +96,52 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Container(
             height: 50,
-            padding: EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: Color(0xFFA780AD).withOpacity(0.05),
+              color: const Color(0xFFA780AD).withValues(alpha: 0.05),
               border: Border(
                 bottom: BorderSide(
-                  color: Color(0xFFA780AD).withOpacity(0.1),
+                  color: const Color(0xFFA780AD).withValues(alpha: 0.1),
                 ),
               ),
             ),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 final isSelected = selectedCategory == categories[index];
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: ChoiceChip(
                     label: Text(
                       categories[index].toUpperCase(),
                       style: TextStyle(
-                        color: isSelected ? Color(0xFFE0DEF4) : Color(0xFFA780AD),
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                        color: isSelected
+                            ? const Color(0xFFE0DEF4)
+                            : const Color(0xFFA780AD),
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.w500,
                         fontSize: 13,
                       ),
                     ),
                     selected: isSelected,
-                    selectedColor: Color(0xFF9297DB),
-                    backgroundColor: Color(0xFFE0DEF4),
+                    selectedColor: const Color(0xFF9297DB),
+                    backgroundColor: const Color(0xFFE0DEF4),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                       side: BorderSide(
-                        color: isSelected ? Colors.transparent : Color(0xFFA780AD).withOpacity(0.3),
+                        color: isSelected
+                            ? Colors.transparent
+                            : const Color(0xFFA780AD).withValues(alpha: 0.3),
                       ),
                     ),
                     onSelected: (selected) {
-                      if (selected) {
-                        updateCategory(categories[index]);
-                      }
+                      if (selected) updateCategory(categories[index]);
                     },
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   ),
                 );
               },
@@ -118,11 +149,28 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Expanded(
             child: isLoading
-                ? Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    itemCount: articles.length,
-                    itemBuilder: (context, index) => NewsCard(article: articles[index]),
-                  ),
+                ? const Center(child: CircularProgressIndicator())
+                : articles.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.newspaper,
+                                size: 64,
+                                color:
+                                    const Color(0xFF4A6572).withValues(alpha: 0.4)),
+                            const SizedBox(height: 16),
+                            const Text('No articles found',
+                                style: TextStyle(
+                                    fontSize: 16, color: Color(0xFF4A6572))),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: articles.length,
+                        itemBuilder: (context, index) =>
+                            NewsCard(article: articles[index]),
+                      ),
           ),
         ],
       ),

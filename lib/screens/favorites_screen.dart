@@ -6,6 +6,8 @@ import '../main.dart';
 class FavoritesScreen extends StatefulWidget {
   static List<Article> savedArticles = [];
 
+  const FavoritesScreen({super.key});
+
   @override
   _FavoritesScreenState createState() => _FavoritesScreenState();
 }
@@ -64,7 +66,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     Icon(
                       Icons.bookmark_border,
                       size: 64,
-                      color: Color(0xFF4A6572).withOpacity(0.5),
+                      color: const Color(0xFF4A6572).withValues(alpha: 0.5),
                     ),
                     SizedBox(height: 16),
                     Text(
@@ -98,10 +100,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                   return Container(
                                     width: 60,
                                     height: 60,
-                                    color: Color(0xFF4A6572).withOpacity(0.1),
+                                    color: const Color(0xFF4A6572).withValues(alpha: 0.1),
                                     child: Icon(
                                       Icons.newspaper,
-                                      color: Color(0xFF4A6572).withOpacity(0.5),
+                                      color: const Color(0xFF4A6572).withValues(alpha: 0.5),
                                     ),
                                   );
                                 },
@@ -109,10 +111,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                             : Container(
                                 width: 60,
                                 height: 60,
-                                color: Color(0xFF4A6572).withOpacity(0.1),
+                                color: const Color(0xFF4A6572).withValues(alpha: 0.1),
                                 child: Icon(
                                   Icons.newspaper,
-                                  color: Color(0xFF4A6572).withOpacity(0.5),
+                                  color: const Color(0xFF4A6572).withValues(alpha: 0.5),
                                 ),
                               ),
                       ),
@@ -127,7 +129,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         ),
                       ),
                       subtitle: Text(
-                        article.description ?? '',
+                        article.description,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
